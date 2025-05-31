@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Virtual Lab: DNA Transcription and Translation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .section {
+      margin: 30px 0;
+    }
+
+    .output {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Virtual Lab: DNA Transcription and Translation</h1>
+
+  <img src="DNA png.png" alt="Ilustrasi DNA" width="300">
+  <br>
+  <button onclick="alert('Transkripsi adalah proses pembentukan mRNA dari DNA. Lokasi pada sel eukariot terjadi di inti sel dan prokariot di sitoplasma.')">
+    Penjelasan Singkat Transkripsi
+  </button>
+  <button onclick="alert('Translasi adalah proses penerjemahan mRNA menjadi protein. Terjadi di ribosom, baik di sitoplasma maupun retikulum endoplasma kasar.')">
+    Penjelasan Singkat Translasi
+  </button>
+
+  <div class="section">
+    <h2>1. Transkripsi</h2>
+    <p>Klik tombol untuk menyalin DNA menjadi mRNA.</p>
+    <button onclick="transcribe()">Transcribe</button>
+    <button onclick="animateTranscription()">Animate Transcription</button>
+    <div class="output" id="mrnaOutput"></div>
+  </div>
+
+  <div class="section">
+    <h2>2. Translasi</h2>
+    <p>Klik tombol untuk menerjemahkan mRNA menjadi rantai asam amino.</p>
+    <button onclick="translation()">Translation</button>
+    <button onclick="animateTranslation()">Animate Translation</button>
+    <div class="output" id="proteinOutput"></div>
+  </div>
+
+  <script>
+    let dna = "ATGCGTACGTAG";
+    let mrna = "";
+
+    function transcribe() {
+      mrna = dna
+        .replace(/A/g, "Utemp")
+        .replace(/T/g, "A")
+        .replace(/C/g, "G")
+        .replace(/G/g, "C")
+        .replace(/Utemp/g, "U");
+      document.getElementById("mrnaOutput").innerText = "mRNA: " + mrna;
+    }
+
+    async function animateTranscription() {
+      let result = "";
+      document.getElementById("mrnaOutput").innerText = "mRNA: ";
+      for (let i = 0; i < dna.length; i++) {
+        let base = dna[i];
+        let rna = convertBase(base);
+        result += rna;
+        await delay(300);
+        document.getElementById("mrnaOutput").innerText = "mRNA: " + result;
+      }
+      mrna = result;
+    }
+
+    function convertBase(base) {
+      switch (base) {
+        case "A": return "U";
+        case "T": return "A";
+        case "C": return "G";
+        case "G": return "C";
+        default: return "?";
+      }
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const codonTable = {
+      UUU: "Phe", UUC: "Phe", UUA: "Leu", UUG: "Leu",
+      CUU: "Leu", CUC: "Leu", CUA: "Leu", CUG: "Leu",
+      AUU: "Ile", AUC: "Ile", AUA: "Ile", AUG: "Met",
+      GUU: "Val", GUC: "Val", GUA: "Val", GUG: "Val",
+      UCU: "Ser", UCC: "Ser", UCA: "Ser", UCG: "Ser",
+      CCU: "Pro", CCC: "Pro", CCA: "Pro", CCG: "Pro",
+      ACU: "Thr", ACC: "Thr", ACA: "Thr", ACG: "Thr",
+      GCU: "Ala", GCC: "Ala", GCA: "Ala", GCG: "Ala",
+      UAU: "Tyr", UAC: "Tyr", UAA: "Stop", UAG: "Stop",
+      CAU: "His", CAC: "His", CAA: "Gln", CAG: "Gln",
+      AAU: "Asn", AAC: "Asn", AAA: "Lys", AAG: "Lys",
+      GAU: "Asp", GAC: "Asp", GAA: "Glu", GAG: "Glu",
+      UGU: "Cys", UGC: "Cys", UGA: "Stop", UGG: "Trp",
+      CGU: "Arg", CGC: "Arg", CGA: "Arg", CGG: "Arg",
+      AGU: "Ser", AGC: "Ser", AGA: "Arg", AGG: "Arg",
+      GGU: "Gly", GGC: "Gly", GGA: "Gly", GGG: "Gly"
+    };
+
+    function translation() {
+      if (!mrna) {
+        document.getElementById("proteinOutput").innerText = "Please transcribe DNA first.";
+        return;
+      }
+
+      let protein = "";
+      for (let i = 0; i < mrna.length; i += 3) {
+        const codon = mrna.slice(i, i + 3);
+        const amino = codonTable[codon] || "Unknown";
+        if (amino === "Stop") break;
+        protein += amino + " - ";
+      }
+
+      document.getElementById("proteinOutput").innerText = "Protein: " + protein.slice(0, -3);
+    }
+
+    async function animateTranslation() {
+      if (!mrna) {
+        document.getElementById("proteinOutput").innerText = "Please transcribe DNA first.";
+        return;
+      }
+
+      let protein = "";
+      document.getElementById("proteinOutput").innerText = "Protein: ";
+      for (let i = 0; i < mrna.length; i += 3) {
+        const codon = mrna.slice(i, i + 3);
+        const amino = codonTable[codon] || "Unknown";
+        if (amino === "Stop") break;
+        protein += amino + " - ";
+        await delay(400);
+        document.getElementById("proteinOutput").innerText = "Protein: " + protein.slice(0, -3);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Lab: DNA Transcription and Translation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .section {
+      margin: 30px 0;
+    }
+
+    .output {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+	  /* Penjelasan panjang yang rapi */
+    .explanation-section {
+      max-width: 700px;
+      margin: 30px auto;
+      background-color: #fefefe;
+      padding: 20px 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: justify;
+      font-size: 18px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .explanation-section h2 {
+      color: #1a73e8;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .explanation-buttons {
+      margin: 20px auto;
+      max-width: 700px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Virtual Lab: DNA Transcription and Translation</h1>
+
+  <img src="DNA png.png" alt="Ilustrasi DNA" width="300">
+  <img src="sintesis protein png.png" alt="Ilustrasi Sintesis Protein" width="300">
+  <br>
+
+  <button onclick="alert('Transkripsi adalah proses pembentukan mRNA dari DNA. Lokasi: inti sel (eukariot) atau sitoplasma (prokariot).')">
+    Penjelasan Singkat Transkripsi
+  </button>
+  <button onclick="alert('Translasi adalah proses penerjemahan mRNA menjadi protein. Terjadi di ribosom.')">
+    Penjelasan Singkat Translasi
+  </button>
+  
+  <div class="section">
+    <h2>1. Transkripsi</h2>
+    <p>Klik tombol untuk menyalin DNA menjadi mRNA.</p>
+    <button onclick="randomizeDNA()">Ganti Urutan DNA</button>
+    <button onclick="animateTranscription()">Animate Transcription</button>
+    <div class="output" id="dnaOutput">DNA: </div>
+    <div class="output" id="mrnaOutput"></div>
+  </div>
+
+  <div class="section">
+    <h2>2. Translasi</h2>
+    <p>Klik tombol untuk menerjemahkan mRNA menjadi rantai asam amino.</p>
+    <button onclick="animateTranslation()">Animate Translation</button>
+    <div class="output" id="proteinOutput"></div>
+  </div>
+
+  <div class="section">
+    <h2>Tabel Asam Amino</h2>
+    <img src="asam amino png.PNG" alt="Tabel Asam Amino" width="300">
+  </div>
+
+  <br><br>
+  <button onclick="resetAll(); playClick()">Reset Semua</button>
+  <button onclick="miniQuiz(); playClick()">Kuis Kodon</button>
+
+  <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+
+  <script>
+    const dnaOptions = [
+      "ATGCGTACGTAGCGATGG",
+      "TACGGCATAGCTAGCTAG",
+      "CGTATGCATGCTAGCTAA",
+      "GGCATACGTAGCTAGCGA"
+    ];
+
+    let dna = dnaOptions[0];
+    let mrna = "";
+
+    document.getElementById("dnaOutput").innerText = "DNA: " + dna;
+
+    function randomizeDNA() {
+      const randomIndex = Math.floor(Math.random() * dnaOptions.length);
+      dna = dnaOptions[randomIndex];
+      mrna = "";
+      document.getElementById("dnaOutput").innerText = "DNA: " + dna;
+      document.getElementById("mrnaOutput").innerText = "";
+      document.getElementById("proteinOutput").innerText = "";
+    }
+
+    function transcribe() {
+      mrna = dna
+        .replace(/A/g, "Utemp")
+        .replace(/T/g, "A")
+        .replace(/C/g, "G")
+        .replace(/G/g, "C")
+        .replace(/Utemp/g, "U");
+      document.getElementById("mrnaOutput").innerText = "mRNA: " + mrna;
+    }
+
+    async function animateTranscription() {
+      let result = "";
+      document.getElementById("mrnaOutput").innerText = "mRNA: ";
+      for (let i = 0; i < dna.length; i++) {
+        let base = dna[i];
+        let rna = convertBase(base);
+        result += rna;
+        await delay(300);
+        document.getElementById("mrnaOutput").innerText = "mRNA: " + result;
+      }
+      mrna = result;
+    }
+
+    function convertBase(base) {
+      switch (base) {
+        case "A": return "U";
+        case "T": return "A";
+        case "C": return "G";
+        case "G": return "C";
+        default: return "?";
+      }
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const codonTable = {
+      UUU: "Phe", UUC: "Phe", UUA: "Leu", UUG: "Leu",
+      CUU: "Leu", CUC: "Leu", CUA: "Leu", CUG: "Leu",
+      AUU: "Ile", AUC: "Ile", AUA: "Ile", AUG: "Met",
+      GUU: "Val", GUC: "Val", GUA: "Val", GUG: "Val",
+      UCU: "Ser", UCC: "Ser", UCA: "Ser", UCG: "Ser",
+      CCU: "Pro", CCC: "Pro", CCA: "Pro", CCG: "Pro",
+      ACU: "Thr", ACC: "Thr", ACA: "Thr", ACG: "Thr",
+      GCU: "Ala", GCC: "Ala", GCA: "Ala", GCG: "Ala",
+      UAU: "Tyr", UAC: "Tyr", UAA: "Stop", UAG: "Stop",
+      CAU: "His", CAC: "His", CAA: "Gln", CAG: "Gln",
+      AAU: "Asn", AAC: "Asn", AAA: "Lys", AAG: "Lys",
+      GAU: "Asp", GAC: "Asp", GAA: "Glu", GAG: "Glu",
+      UGU: "Cys", UGC: "Cys", UGA: "Stop", UGG: "Trp",
+      CGU: "Arg", CGC: "Arg", CGA: "Arg", CGG: "Arg",
+      AGU: "Ser", AGC: "Ser", AGA: "Arg", AGG: "Arg",
+      GGU: "Gly", GGC: "Gly", GGA: "Gly", GGG: "Gly"
+    };
+
+    function translation() {
+      if (mrna === "") return;
+      const protein = [];
+      for (let i = 0; i < mrna.length; i += 3) {
+        const codon = mrna.substring(i, i + 3);
+        const amino = codonTable[codon] || "";
+        if (amino === "Stop") break;
+        if (amino) protein.push(amino);
+      }
+      document.getElementById("proteinOutput").innerText = "Protein: " + protein.join(" - ");
+    }
+
+    async function animateTranslation() {
+      if (!mrna) {
+        document.getElementById("proteinOutput").innerText = "Silakan lakukan transkripsi terlebih dahulu.";
+        return;
+      }
+
+      let protein = "";
+      document.getElementById("proteinOutput").innerText = "Protein: ";
+      for (let i = 0; i < mrna.length; i += 3) {
+        const codon = mrna.slice(i, i + 3);
+        const amino = codonTable[codon] || "Unknown";
+        if (amino === "Stop") break;
+        protein += amino + " - ";
+        await delay(400);
+        document.getElementById("proteinOutput").innerText = "Protein: " + protein.slice(0, -3);
+      }
+    }
+
+    function resetAll() {
+      dna = dnaOptions[0];
+      mrna = "";
+      document.getElementById("dnaOutput").innerText = "DNA: " + dna;
+      document.getElementById("mrnaOutput").innerText = "mRNA:";
+      document.getElementById("proteinOutput").innerText = "Protein:";
+    }
+
+    function playClick() {
+      document.getElementById("clickSound").play();
+    }
+
+    function miniQuiz() {
+      const answer = prompt("Apa hasil dari kodon AUG?");
+      if (answer && answer.toLowerCase() === "met") {
+        alert("Benar! AUG = Metionin (Met)");
+      } else {
+        alert("Kurang tepat. Jawaban yang benar: Met (Metionin).");
+      }
+    }
+  </script>
+</body>
+</html>
