@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praktikum Interaktif</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f8ff;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 { color: #6a1b9a; }
+  button {
+    background: #9c27b0;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  button:hover { background: #7b1fa2; }
+  .output {
+    margin: 10px;
+    font-weight: bold;
+  }
+  a { display: block; margin-top: 20px; color: #9c27b0; text-decoration: none; }
+</style>
+</head>
+<body>
+  <h1>Praktikum Transkripsi & Translasi</h1>
+  <p>Klik tombol untuk memulai praktikum!</p>
+  <div>
+    <button onclick="randomDNA()">Ganti Urutan DNA</button>
+    <button onclick="startTranscription()">Transkripsi</button>
+    <button onclick="startTranslation()">Translasi</button>
+  </div>
+  <div class="output" id="outputDNA"></div>
+  <div class="output" id="output"></div>
+  <a href="index.html">Kembali</a>
+  <script>
+    let dna = "ATGCGTACGTTAGC";
+    const dnaOptions = ["ATGCGTACGTTAGC", "CGTATGCAAGCTAG", "TACGGCATAGCTAG", "GGCATACGTAGCTA"];
+    document.getElementById("outputDNA").innerText = "DNA: " + dna;
+    function randomDNA() {
+      const randomIndex = Math.floor(Math.random() * dnaOptions.length);
+      dna = dnaOptions[randomIndex];
+      document.getElementById("outputDNA").innerText = "DNA: " + dna;
+      document.getElementById("output").innerText = "";
+    }
+    function startTranscription() {
+      const mrna = dna.replace(/A/g,"Utemp").replace(/T/g,"A").replace(/G/g,"C").replace(/C/g,"G").replace(/Utemp/g,"U");
+      document.getElementById("output").innerText = "Hasil Transkripsi (mRNA): " + mrna;
+    }
+    function startTranslation() {
+      const mrna = dna.replace(/A/g,"Utemp").replace(/T/g,"A").replace(/G/g,"C").replace(/C/g,"G").replace(/Utemp/g,"U");
+      const codonTable = {
+        AUG: "Met", CGU: "Arg", ACG: "Thr", UUA: "Leu", GCU: "Ala"
+      };
+      let protein = "";
+      for (let i=0; i<mrna.length; i+=3){
+        const codon = mrna.substring(i,i+3);
+        const aa = codonTable[codon] || "???";
+        if (aa === "Stop") break;
+        protein += aa + " - ";
+      }
+      document.getElementById("output").innerText = "Hasil Translasi (Protein): " + protein.slice(0,-3);
+    }
+  </script>
+</body>
+</html>
