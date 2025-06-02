@@ -1,53 +1,122 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuis Kodon</title>
+<title>Kuis Interaktif</title>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #fff0f5;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #fbc2eb, #f9c5d1);
     text-align: center;
+    padding: 40px;
+    color: #333;
+  }
+  h1 {
+    color: #6a1b9a;
+    margin-bottom: 20px;
+  }
+  .box {
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px dashed #9c27b0;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 20px auto;
     padding: 20px;
   }
-  h1 { color: #6a1b9a; }
   button {
     background: #9c27b0;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 10px 20px;
     margin: 10px;
     cursor: pointer;
+    font-size: 1rem;
   }
   button:hover { background: #7b1fa2; }
-  a { display: block; margin-top: 20px; color: #9c27b0; text-decoration: none; }
+  input[type="text"] {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 80%;
+    margin: 10px 0;
+  }
+  .output {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-top: 10px;
+  }
+  .correct { color: green; }
+  .wrong { color: red; }
+  a {
+    display: inline-block;
+    margin-top: 20px;
+    color: #9c27b0;
+    text-decoration: none;
+    background: #f9c5d1;
+    padding: 8px 16px;
+    border-radius: 6px;
+  }
+  a:hover { background: #fbc2eb; }
 </style>
 </head>
 <body>
-  <h1>Kuis Kodon</h1>
-  <button onclick="startQuiz()">Mulai Kuis</button>
-  <div id="result"></div>
-  <a href="index.html">Kembali</a>
+  <h1>🎲 Kuis 🎲</h1>
+  <div class="box">
+    <div id="question">Klik tombol untuk memulai kuis!</div>
+    <input type="text" id="answerInput" placeholder="Ketik jawabanmu..." style="display:none;">
+    <br>
+    <button onclick="nextQuestion()" id="startBtn">Mulai Kuis</button>
+    <button onclick="checkAnswer()" id="submitBtn" style="display:none;">Kirim Jawaban</button>
+    <button onclick="nextQuestion()" id="nextBtn" style="display:none;">Soal Berikutnya</button>
+    <div class="output" id="result"></div>
+  </div>
+  <a href="index.html">← Kembali</a>
+
   <script>
-    function startQuiz() {
-      const data = [
-        { q: "Apa hasil kodon AUG?", a: "met" },
-        { q: "Apa hasil kodon UUU?", a: "phe" },
-        { q: "Apa hasil kodon UGA?", a: "stop" },
-        { q: "Apa hasil kodon GGU?", a: "gly" },
-        { q: "Apa hasil kodon AAA?", a: "lys" }
-      ];
-      const r = data[Math.floor(Math.random() * data.length)];
-      const user = prompt(r.q);
-      if (user && user.trim().toLowerCase() === r.a) {
-        document.getElementById("result").innerText = "Benar! 🎉";
-      } else {
-        document.getElementById("result").innerText = "Jawaban: " + r.a.toUpperCase();
-      }
+    const data = [
+      { q: "Apa hasil kodon AUG?", a: "met" },
+      { q: "Apa hasil kodon UUU?", a: "phe" },
+      { q: "Apa hasil kodon UGA?", a: "stop" },
+      { q: "Apa hasil kodon GGU?", a: "gly" },
+      { q: "Apa hasil kodon AAA?", a: "lys" },
+      { q: "Apa proses pembentukan mRNA dari DNA?", a: "transkripsi" },
+      { q: "Di mana translasi terjadi?", a: "ribosom" },
+      { q: "Apa tujuan transkripsi?", a: "membuat mrna" },
+      { q: "Enzim apa yang memulai transkripsi?", a: "rna polimerase" },
+      { q: "Asam amino pertama yang dikode AUG?", a: "metionin" }
+    ];
+
+    let currentQuestion = null;
+
+    function nextQuestion() {
+      currentQuestion = data[Math.floor(Math.random() * data.length)];
+      document.getElementById("question").innerText = currentQuestion.q;
+      document.getElementById("answerInput").style.display = "inline-block";
+      document.getElementById("submitBtn").style.display = "inline-block";
+      document.getElementById("nextBtn").style.display = "none";
+      document.getElementById("answerInput").value = "";
+      document.getElementById("result").innerText = "";
     }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById("answerInput").value.trim().toLowerCase();
+      if (userAnswer === currentQuestion.a) {
+        document.getElementById("result").innerText = "Benar! 🎉";
+        document.getElementById("result").className = "output correct";
+      } else {
+        document.getElementById("result").innerText = "Salah ❌, Jawaban: " + currentQuestion.a.toUpperCase();
+        document.getElementById("result").className = "output wrong";
+      }
+      document.getElementById("nextBtn").style.display = "inline-block";
+    }
+
+    // Sembunyikan start button setelah mulai kuis
+    document.getElementById("startBtn").addEventListener("click", () => {
+      document.getElementById("startBtn").style.display = "none";
+    });
   </script>
 </body>
 </html>
